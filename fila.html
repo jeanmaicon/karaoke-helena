@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fila de Músicas – Karaokê da Helena</title>
   <style>
+    @font-face {
+      font-family: 'Font-On-A-Stick';
+      src: url('Font-On-A-Stick.ttf') format('truetype');
+    }
     body {
       font-family: 'Font-On-A-Stick', cursive;
       background: linear-gradient(to bottom, #aeeafd, #ffffff);
@@ -18,7 +22,7 @@
       text-align: center;
     }
     .container {
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: rgba(255, 255, 255, 0.8);
       padding: 30px;
       margin: 50px auto;
       width: 90%;
@@ -27,9 +31,10 @@
       box-shadow: 0 0 10px #b3e5fc;
     }
     h1 {
-      font-size: 24px;
+      font-size: 30px;
       color: #0077c2;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+      letter-spacing: 2px; 
     }
     ul {
       list-style: none;
@@ -38,7 +43,7 @@
     li {
       margin: 10px 0;
       padding: 12px;
-      background-color: #f0f8ff;
+      background-color: #e65596;
       border-radius: 10px;
       text-align: left;
     }
@@ -62,7 +67,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>🎵 Fila de Músicas</h1>
+    <h1>🎵 Fila de Músicas 🎵</h1>
     <ul id="listaFila">
       <li>Carregando fila...</li>
     </ul>
@@ -106,6 +111,7 @@ carregarFila();
   </script>
 </body>
 </html>
+
 
 
 
