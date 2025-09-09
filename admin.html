@@ -271,6 +271,9 @@
 
     const data = await res.json();
     const somenteFila = data.filter(item => item.status !== 'AGORA_CANTANDO');
+    somenteFila.forEach((item, index) => {
+  // construir e exibir a fila
+    });
     data.sort((a, b) => a.id - b.id);
 
     listaFila.innerHTML = "";
@@ -318,6 +321,7 @@
 
 </body>
 </html>
+
 
 
 
