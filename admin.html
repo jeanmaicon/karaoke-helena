@@ -54,6 +54,9 @@
       cursor: pointer;
       font-size: 14px;
     }
+   
+    .priorizar { background-color: #ffd6e8; }
+    .remover   { background-color: #f44336; color: white; }
     .agora-container {
       background-color: #ffd6e8;
       border-radius: 12px;
@@ -69,10 +72,7 @@
       margin-top: 10px;
       font-size: 16px;
       color: #333;
-    }
-
-    .priorizar { background-color: #ffd6e8; }
-    .remover   { background-color: #f44336; color: white; }
+    } 
   </style>
 </head>
 <body>
@@ -182,9 +182,70 @@
   atualizarAgoraCantando();
   carregarFila();
 </script>
+<script>
+  const listaFila = document.getElementById('listaFila');
+  const painelAgoraCantando = document.getElementById('agoraCantando');
+
+  const supabaseUrl = 'https://SEU_PROJETO.supabase.co';
+  const supabaseKey = 'SUA_ANON_KEY';
+
+  async function carregarFila() {
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+
+    const data = await res.json();
+    data.sort((a, b) => a.id - b.id);
+
+    listaFila.innerHTML = "";
+
+    data.forEach((item, index) => {
+      const posicao = `${index + 1}º`;
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <div class="nome">${posicao} – ${item.nome}</div>
+        <div>${item.musica}</div>
+        <div>⏰ ${item.horario}</div>
+        ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+      `;
+      listaFila.appendChild(li);
+    });
+  }
+
+  async function carregarAgoraCantando() {
+    const res = await fetch(`${supabaseUrl}/rest/v1/agora?select=*&order=id.desc&limit=1`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+
+    const [atual] = await res.json();
+
+    if (!atual) {
+      painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
+      return;
+    }
+
+    painelAgoraCantando.innerHTML = `
+      <strong>${atual.nome}</strong><br>
+      ${atual.musica}<br>
+      ⏰ ${atual.horario}<br>
+      ${atual.youtube ? `<a href="${atual.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+    `;
+  }
+
+  // Inicia a página
+  carregarAgoraCantando();
+  carregarFila();
+</script>
 
 </body>
 </html>
+
 
 
 
