@@ -73,26 +73,41 @@
   </div>
 
   <script>
-    document.getElementById('formEntrada').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const nome = document.getElementById('nome').value;
-      const musica = document.getElementById('musica').value;
-      const youtube = document.getElementById('youtube').value;
+  document.getElementById('formEntrada').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const nome = document.getElementById('nome').value;
+    const musica = document.getElementById('musica').value;
+    const youtube = document.getElementById('youtube').value;
 
-      const entrada = {
-        nome,
-        musica,
-        youtube,
-        horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
+    const entrada = {
+      nome,
+      musica,
+      youtube,
+      horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
 
-      // Aqui você colocará a lógica para enviar para Supabase/Firebase
-      console.log('Simulando envio:', entrada);
-      alert('Entrada adicionada à fila!');
+    const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
 
-      // Limpa os campos
-      document.getElementById('formEntrada').reset();
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila`, {
+      method: 'POST',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify(entrada)
     });
-  </script>
+
+    if (res.ok) {
+      alert('Entrada adicionada à fila!');
+      document.getElementById('formEntrada').reset();
+    } else {
+      alert('Erro ao enviar a entrada. Tente novamente.');
+    }
+  });
+</script>
 </body>
 </html>
+
