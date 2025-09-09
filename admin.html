@@ -98,166 +98,82 @@
 
 <script>
   const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c'; // 🔒 Insira sua chave completa aqui
+  const supabaseKey = 'SUA_CHAVE_AQUI'; // ✅ Substitua com sua chave Anon completa
 
   const listaAdmin = document.getElementById('listaAdmin');
   const painelAgoraCantando = document.getElementById('agoraCantando');
 
   async function carregarFila() {
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
+    try {
+      const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
 
-    const data = await res.json();
-    const fila = data.filter(item => item.status !== 'AGORA_CANTANDO');
-    fila.sort((a, b) => a.id - b.id);
+      const data = await res.json();
+      const fila = data.filter(item => item.status !== 'AGORA_CANTANDO');
+      fila.sort((a, b) => a.id - b.id);
 
-    listaAdmin.innerHTML = "";
-    fila.forEach((item, index) => {
-      const posicao = `${index + 1}º`;
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <div><strong>${posicao} – ${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
-        ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
-        <div class="botoes">
-          <button onclick="cantarAgora(${item.id})">🎤 Cantar agora!</button>
-          <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
-        </div>
-      `;
-      listaAdmin.appendChild(li);
-    });
+      listaAdmin.innerHTML = "";
+      fila.forEach((item, index) => {
+        const posicao = `${index + 1}º`;
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div><strong>${posicao} – ${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
+          ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
+          <div class="botoes">
+            <button onclick="cantarAgora(${item.id})">🎤 Cantar agora!</button>
+            <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
+          </div>
+        `;
+        listaAdmin.appendChild(li);
+      });
+    } catch (err) {
+      console.error('Erro ao carregar fila:', err);
+    }
   }
 
   async function carregarAgoraCantando() {
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
+    try {
+      const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+
+      const data = await res.json();
+      const agora = data[0];
+
+      if (!agora) {
+        painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
+      } else {
+        painelAgoraCantando.innerHTML = `
+          <strong>🎵 ${agora.musica}</strong><br>
+          👤 ${agora.nome}<br>
+          ⏰ ${agora.horario}<br>
+          ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+        `;
       }
-    });
-
-    const data = await res.json();
-    const agora = data[0];
-
-    if (!agora) {
-      painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
-    } else {
-      painelAgoraCantando.innerHTML = `
-        <strong>🎵 ${agora.musica}</strong><br>
-        👤 ${agora.nome}<br>
-        ⏰ ${agora.horario}<br>
-        ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
-      `;
+    } catch (err) {
+      console.error('Erro ao carregar agora cantando:', err);
     }
   }
 
   async function cantarAgora(id) {
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-    const [item] = await res.json();
-    if (!item) return;
+    try {
+      const res = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+      const [item] = await res.json();
+      if (!item) return;
 
-    await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
-      method: 'DELETE',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-
-    await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${item.id}`, {
-      method: 'DELETE',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-
-    const { id, ...novoItem } = item;
-    novoItem.status = 'AGORA_CANTANDO';
-
-    await fetch(`${supabaseUrl}/rest/v1/fila`, {
-      method: 'POST',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(novoItem)
-    });
-
-    carregarFila();
-    carregarAgoraCantando();
-  }
-
-  async function pularMusica() {
-    // Remove música atual
-    await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
-      method: 'DELETE',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-
-    // Busca próxima música da fila
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&or=(status.is.null,status.neq.AGORA_CANTANDO)&order=id.asc&limit=1`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-
-    const data = await res.json();
-    const proxima = data[0];
-    if (!proxima) return;
-
-    // Remove da fila
-    await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${proxima.id}`, {
-      method: 'DELETE',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-
-    const { id, ...novaEntrada } = proxima;
-    novaEntrada.status = 'AGORA_CANTANDO';
-
-    await fetch(`${supabaseUrl}/rest/v1/fila`, {
-      method: 'POST',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(novaEntrada)
-    });
-
-    carregarFila();
-    carregarAgoraCantando();
-  }
-
-  async function voltarParaFila() {
-    // Pega música atual
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-    const data = await res.json();
-    const atual = data[0];
-
-    if (atual) {
-      await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${atual.id}`, {
+      await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
         method: 'DELETE',
         headers: {
           apikey: supabaseKey,
@@ -265,8 +181,16 @@
         }
       });
 
-      const { id, ...novo } = atual;
-      novo.status = null;
+      await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${item.id}`, {
+        method: 'DELETE',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+
+      const { id, ...novoItem } = item;
+      novoItem.status = 'AGORA_CANTANDO';
 
       await fetch(`${supabaseUrl}/rest/v1/fila`, {
         method: 'POST',
@@ -275,25 +199,124 @@
           Authorization: `Bearer ${supabaseKey}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(novo)
+        body: JSON.stringify(novoItem)
       });
-    }
 
-    await pularMusica(); // chama próxima automaticamente
+      carregarFila();
+      carregarAgoraCantando();
+    } catch (err) {
+      console.error('Erro em cantarAgora:', err);
+    }
+  }
+
+  async function pularMusica() {
+    try {
+      // Remove atual
+      await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
+        method: 'DELETE',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+
+      // Corrigido: filtro or com encode
+      const orFilter = encodeURIComponent('or=(status.is.null,status.neq.AGORA_CANTANDO)');
+      const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&${orFilter}&order=id.asc&limit=1`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+
+      const data = await res.json();
+      const proxima = data[0];
+      if (!proxima) return;
+
+      await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${proxima.id}`, {
+        method: 'DELETE',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+
+      const { id, ...novaEntrada } = proxima;
+      novaEntrada.status = 'AGORA_CANTANDO';
+
+      await fetch(`${supabaseUrl}/rest/v1/fila`, {
+        method: 'POST',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(novaEntrada)
+      });
+
+      carregarFila();
+      carregarAgoraCantando();
+    } catch (err) {
+      console.error('Erro em pularMusica:', err);
+    }
+  }
+
+  async function voltarParaFila() {
+    try {
+      const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+      const data = await res.json();
+      const atual = data[0];
+
+      if (atual) {
+        await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${atual.id}`, {
+          method: 'DELETE',
+          headers: {
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`
+          }
+        });
+
+        const { id, ...novo } = atual;
+        novo.status = null;
+
+        await fetch(`${supabaseUrl}/rest/v1/fila`, {
+          method: 'POST',
+          headers: {
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(novo)
+        });
+      }
+
+      await pularMusica(); // chama próxima automaticamente
+    } catch (err) {
+      console.error('Erro em voltarParaFila:', err);
+    }
   }
 
   async function remover(id) {
-    await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
-      method: 'DELETE',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-    carregarFila();
+    try {
+      await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+      carregarFila();
+    } catch (err) {
+      console.error('Erro em remover:', err);
+    }
   }
 
-  // Inicializa
+  // Inicialização
   carregarFila();
   carregarAgoraCantando();
   setInterval(() => {
@@ -303,4 +326,3 @@
 </script>
 </body>
 </html>
-
