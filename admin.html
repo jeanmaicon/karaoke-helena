@@ -201,7 +201,7 @@
   });
 
   // 4. Inserir nova entrada com status AGORA_CANTANDO
-  await fetch(`${supabaseUrl}/rest/v1/fila`, {
+  await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
     method: 'POST',
     headers: {
       apikey: supabaseKey,
@@ -318,6 +318,7 @@
 
 </body>
 </html>
+
 
 
 
