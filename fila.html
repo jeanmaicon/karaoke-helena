@@ -37,7 +37,7 @@
       font-size: 30px;
       color: #0077c2;
       margin-bottom: 15px;
-      letter-spacing: 2px; 
+      letter-spacing: 2px;
     }
 
     ul {
@@ -75,7 +75,7 @@
     .agora-container {
       background-color: #ffd6e8;
       padding: 30px;
-      margin: 50px auto;
+      margin: 50px auto 20px;
       width: 90%;
       max-width: 500px;
       border-radius: 20px;
@@ -96,7 +96,7 @@
   <div class="agora-container">
     <h2>🎶 Agora cantando:</h2>
     <div id="agoraCantando" class="painel-musica">
-      <em>Carregando...</em>  
+      <em>Carregando música atual...</em>
     </div>
   </div>
 
@@ -170,7 +170,7 @@
     carregarFila();
     carregarAgoraCantando();
 
-    // 🔁 Atualizações automáticas a cada 2 segundos
+    // Atualizações automáticas a cada 2 segundos
     setInterval(() => {
       carregarFila();
       carregarAgoraCantando();
