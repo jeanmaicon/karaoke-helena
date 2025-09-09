@@ -4,107 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fila de Músicas – Karaokê da Helena</title>
-  <style>
-    @font-face {
-      font-family: 'Font-On-A-Stick';
-      src: url('Font-On-A-Stick.ttf') format('truetype');
-    }
+  <!-- Apenas a parte do <style> alterada -->
 
-    body {
-      font-family: 'Font-On-A-Stick', cursive;
-      background: linear-gradient(to bottom, #aeeafd, #ffffff);
-      background-image: url('https://i.ibb.co/VpBzqbHS/bg-karaoke-helena.png');
-      background-size: 320px 240px;
-      background-repeat: repeat;
-      background-position: bottom;
-      margin: 0;
-      padding: 0;
-      color: #333;
-      text-align: center;
-      font-size: 35px;
-      letter-spacing: 3px;
-    }
+<style>
+  @font-face {
+    font-family: 'Font-On-A-Stick';
+    src: url('Font-On-A-Stick.ttf') format('truetype');
+  }
 
-    .container {
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 30px;
-      margin: 50px auto;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 20px;
-      box-shadow: 0 0 10px #b3e5fc;
-      font-size: 35px;
-      letter-spacing: 3px;
-    }
+  body {
+    font-family: 'Font-On-A-Stick', cursive;
+    background: linear-gradient(to bottom, #aeeafd, #ffffff);
+    background-image: url('https://i.ibb.co/VpBzqbHS/bg-karaoke-helena.png');
+    background-size: 320px 240px;
+    background-repeat: repeat;
+    background-position: bottom;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    text-align: center;
+  }
 
-    h1 {
-      font-size: 50px;
-      color: #0077c2;
-      margin-bottom: 15px;
-      letter-spacing: 3px;
-    }
+  .container {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 30px;
+    margin: 50px auto;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px #b3e5fc;
+  }
 
-    ul {
-      list-style: none;
-      padding: 0;
-    }
+  h1 {
+    font-size: 40px;
+    color: #0077c2;
+    margin-bottom: 15px;
+    letter-spacing: 3px;
+  }
 
-    li {
-      margin: 10px 0;
-      padding: 12px;
-      background-color: #e65596;
-      border-radius: 10px;
-      text-align: left;
-      font-size: 30px;
-      letter-spacing: 3px;
-    }
+  ul {
+    list-style: none;
+    padding: 0;
+  }
 
-    .nome {
-      font-weight: bold;
-      font-size: 30px;
-      letter-spacing: 3px;
-    }
+  li {
+    margin: 10px 0;
+    padding: 12px;
+    background-color: #e65596;
+    border-radius: 10px;
+    text-align: left;
+    font-size: 30px; /* 👈 Aumentado para 15px */
+  }
 
-    .link {
-      display: block;
-      margin-top: 5px;
-      color: #0077c2;
-      font-size: 30px;
-      letter-spacing: 3px;
-    }
+  .nome {
+    font-weight: bold;
+    letter-spacing: 1px;
+    font-size: 30px; /* 👈 Aumentado para 15px */
+  }
 
-    a.voltar {
-      display: inline-block;
-      margin-top: 20px;
-      color: #0077c2;
-      text-decoration: none;
-      font-weight: bold;
-      font-size: 30px;
-      letter-spacing: 3px;
-    }
+  .link {
+    display: block;
+    margin-top: 5px;
+    color: #0077c2;
+    font-size: 30px; /* 👈 Aumentado para 15px */
+    letter-spacing: 1px;
+  }
 
-    .agora-container {
-      background-color: #ffd6e8;
-      padding: 30px;
-      margin: 50px auto 20px;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 20px;
-      box-shadow: 0 0 10px #b3e5fc;
-      font-size: 30px;
-      letter-spacing: 3px;
-    }
+  a.voltar {
+    display: inline-block;
+    margin-top: 20px;
+    color: #0077c2;
+    text-decoration: none;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
 
-    .painel-musica {
-      background-color: #fff;
-      border-radius: 10px;
-      padding: 15px;
-      margin-top: 10px;
-      font-size: 30px;
-      letter-spacing: 3px;
-      color: #333;
-    }
-  </style>
+  .agora-container {
+    background-color: #ffd6e8;
+    padding: 30px;
+    margin: 50px auto 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px #b3e5fc;
+    font-size: 30px; /* 👈 Aumentado para 15px */
+    letter-spacing: 1px;
+  }
+
+  .painel-musica {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 10px;
+    font-size: 30px; /* 👈 Aumentado para 15px */
+    letter-spacing: 1px;
+    color: #333;
+  }
+</style>
+
 </head>
 <body>
   <div class="agora-container">
@@ -192,6 +189,7 @@
   </script>
 </body>
 </html>
+
 
 
 
