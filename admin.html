@@ -8,7 +8,7 @@
     body {
       font-family: 'Font-On-A-Stick', cursive;
       background: linear-gradient(to bottom, #aeeafd, #ffffff);
-      background-image: url('https://i.ibb.co/VpBzqbHS/bg-karaoke-helena.png'); /* Exemplo de fundo Frozen */
+      background-image: url('https://i.ibb.co/VpBzqbHS/bg-karaoke-helena.png');
       background-size: 320px 240px;
       background-repeat: repeat;
       background-position: bottom;
@@ -54,9 +54,7 @@
       cursor: pointer;
       font-size: 14px;
     }
-   
-    .priorizar { background-color: #ffd6e8; }
-    .remover   { background-color: #f44336; color: white; }
+    .remover { background-color: #f44336; color: white; }
     .agora-container {
       background-color: #ffd6e8;
       padding: 30px;
@@ -66,7 +64,6 @@
       border-radius: 20px;
       box-shadow: 0 0 10px #b3e5fc;
     }
-
     .painel-musica {
       background-color: #fff;
       border-radius: 10px;
@@ -92,16 +89,12 @@
     </ul>
   </div>
 
-  <!-- Substitua o <script> atual por este -->
 <script>
   const listaAdmin = document.getElementById('listaAdmin');
   const painelAgoraCantando = document.getElementById('agoraCantando');
 
   const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
   const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
-
-  // Guarda o estado atual do que está sendo cantado
-  let musicaAtual = null;
 
   async function carregarFila() {
     const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
@@ -114,118 +107,100 @@
     const data = await res.json();
     const somenteFila = data.filter(item => item.status !== 'AGORA_CANTANDO');
     somenteFila.sort((a, b) => a.id - b.id);
-    somenteFila.forEach((item, index) => {
-  // construir e exibir a fila
-    });
-    
 
     listaAdmin.innerHTML = "";
-data.forEach((item, index) => {
-  const posicao = `${index + 1}º`;
-
-  const li = document.createElement('li');
-  li.innerHTML = `
-    <div><strong>${posicao} – ${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
-    ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
-    <div class="botoes">
-      <button class="cantar" onclick="cantarAgora(${item.id})">🎤 Cantar agora!</button>
-      <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
-    </div>
-  `;
-  listaAdmin.appendChild(li);
-});
-
+    somenteFila.forEach((item, index) => {
+      const posicao = `${index + 1}º`;
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <div><strong>${posicao} – ${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
+        ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
+        <div class="botoes">
+          <button class="cantar" onclick="cantarAgora(${item.id})">🎤 Cantar agora!</button>
+          <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
+        </div>
+      `;
+      listaAdmin.appendChild(li);
+    });
   }
- async function carregarAgoraCantando() {
-  const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
-  headers: {
-    apikey: supabaseKey,
-    Authorization: `Bearer ${supabaseKey}`
-  }
-});
 
+  async function carregarAgoraCantando() {
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
 
-  const data = await res.json();
-  const agora = data[0];
+    const data = await res.json();
+    const agora = data[0];
 
-  const painelAgoraCantando = document.getElementById('agoraCantando');
-
-  if (!agora) {
-    painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
-  } else {
-    painelAgoraCantando.innerHTML = `
-  <strong>🎵 ${agora.musica}</strong><br>
-  👤 ${agora.nome}<br>
-  ⏰ ${agora.horario}<br>
-  ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
-`;
-
-  }
-}
-
-
-
-
-
-
- async function cantarAgora(id) {
-  // 1. Buscar o item da fila
-  const resGet = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`
+    if (!agora) {
+      painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
+    } else {
+      painelAgoraCantando.innerHTML = `
+        <strong>🎵 ${agora.musica}</strong><br>
+        👤 ${agora.nome}<br>
+        ⏰ ${agora.horario}<br>
+        ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+      `;
     }
-  });
-
-  const [item] = await resGet.json();
-
-  if (!item) {
-    alert('Música não encontrada.');
-    return;
   }
 
-  // 2. Remover o item original da fila
-  await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
-    method: 'DELETE',
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`
+  async function cantarAgora(id) {
+    // 1. Buscar o item da fila
+    const resGet = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+
+    const [item] = await resGet.json();
+    if (!item) {
+      alert('Música não encontrada.');
+      return;
     }
-  });
 
-  // 3. Remover entrada anterior com status AGORA_CANTANDO
-  await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
-    method: 'DELETE',
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`
-    }
-  });
+    // 2. Remover entrada anterior com status AGORA_CANTANDO
+    await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
+      method: 'DELETE',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
 
-  // 4. Inserir nova entrada com status AGORA_CANTANDO
-  await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
-    method: 'POST',
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      nome: item.nome,
-      musica: item.musica,
-      youtube: item.youtube,
-      horario: item.horario,
-      status: "AGORA_CANTANDO"
-    })
-  });
+    // 3. Remover o item original da fila
+    await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
 
-  // ✅ 5. Atualizar a lista e o painel só depois de tudo
-  await carregarFila();               // atualiza a lista SEM o item
-  await carregarAgoraCantando();     // atualiza o painel
-}
+    // 4. Inserir nova entrada com status AGORA_CANTANDO
+    await fetch(`${supabaseUrl}/rest/v1/fila`, {
+      method: 'POST',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        nome: item.nome,
+        musica: item.musica,
+        youtube: item.youtube,
+        horario: item.horario,
+        status: "AGORA_CANTANDO"
+      })
+    });
 
-
-
+    // 5. Atualiza visualmente
+    await carregarFila();
+    await carregarAgoraCantando();
+  }
 
   async function remover(id) {
     await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
@@ -238,116 +213,9 @@ data.forEach((item, index) => {
     carregarFila();
   }
 
-  function atualizarAgoraCantando() {
-    if (!musicaAtual) {
-      painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
-    } else {
-      painelAgoraCantando.innerHTML = `
-        <strong>${musicaAtual.nome}</strong><br>
-        ${musicaAtual.musica}<br>
-        ⏰ ${musicaAtual.horario}<br>
-        ${musicaAtual.youtube ? `<a href="${musicaAtual.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
-      `;
-    }
-  }
-
   // Inicializa
   carregarAgoraCantando();
   carregarFila();
-
 </script>
-<script>
-  const listaFila = document.getElementById('listaFila');
-  const painelAgoraCantando = document.getElementById('agoraCantando');
-
-  const supabaseUrl = 'https://SEU_PROJETO.supabase.co';
-  const supabaseKey = 'SUA_ANON_KEY';
-
-  async function carregarFila() {
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-
-    const data = await res.json();
-    const somenteFila = data.filter(item => item.status !== 'AGORA_CANTANDO');
-    somenteFila.sort((a, b) => a.id - b.id);
-    somenteFila.forEach((item, index) => {
-  // construir e exibir a fila
-    });
-    
-   
-
-    listaAdmin.innerHTML = "";
-data.forEach((item, index) => {
-  const posicao = `${index + 1}º`;
-
-  const li = document.createElement('li');
-  li.innerHTML = `
-    <div><strong>${posicao} – ${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
-    ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
-    <div class="botoes">
-      <button class="cantar" onclick="cantarAgora(${item.id})">🎤 Cantar agora!</button>
-      <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
-    </div>
-  `;
-  listaAdmin.appendChild(li);
-});
-
-  }
-
-  async function carregarAgoraCantando() {
-    const res = await fetch(`${supabaseUrl}/rest/v1/agora?select=*&order=id.desc&limit=1`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-
-    const [atual] = await res.json();
-
-    if (!atual) {
-      painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
-      return;
-    }
-
-    painelAgoraCantando.innerHTML = `
-      <strong>${atual.nome}</strong><br>
-      ${atual.musica}<br>
-      ⏰ ${atual.horario}<br>
-      ${atual.youtube ? `<a href="${atual.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
-    `;
-  }
-
-  // Inicia a página
-  carregarAgoraCantando();
-  carregarFila();
-</script>
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
