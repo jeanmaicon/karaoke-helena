@@ -131,12 +131,12 @@
     });
   }
   async function carregarAgoraCantando() {
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
+  const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&nome=eq.AGORA_CANTANDO&limit=1`, {
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`
+    }
+  });
 
   const data = await res.json();
   const agora = data[0];
@@ -154,6 +154,7 @@
     `;
   }
 }
+
 
 
 
@@ -306,6 +307,7 @@
 
 </body>
 </html>
+
 
 
 
