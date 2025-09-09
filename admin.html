@@ -196,7 +196,7 @@
     }
   });
 
-  // 4. Inserir novo item com status AGORA_CANTANDO
+  // 4. Inserir nova entrada com status AGORA_CANTANDO
   await fetch(`${supabaseUrl}/rest/v1/fila`, {
     method: 'POST',
     headers: {
@@ -213,10 +213,11 @@
     })
   });
 
-  // 5. Atualizar a visualização
-  carregarAgoraCantando();
-  carregarFila();
+  // ✅ 5. Atualizar a lista e o painel só depois de tudo
+  await carregarFila();               // atualiza a lista SEM o item
+  await carregarAgoraCantando();     // atualiza o painel
 }
+
 
 
 
@@ -313,6 +314,7 @@
 
 </body>
 </html>
+
 
 
 
