@@ -63,9 +63,33 @@
       text-decoration: none;
       font-weight: bold;
     }
+    .agora-container {
+      background-color: #ffd6e8;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 0 10px rgba(255, 182, 193, 0.5);
+    }
+
+    .painel-musica {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      margin-top: 10px;
+      font-size: 16px;
+      color: #333;
+    }
+
   </style>
 </head>
 <body>
+  <div class="agora-container">
+    <h2>🎶 Agora cantando:</h2>
+    <div id="agoraCantando" class="painel-musica">
+      <em>Carregando...</em>  
+    </div>
+  </div>
+
   <div class="container">
     <h1>🎵 Fila de Músicas 🎵</h1>
     <ul id="listaFila">
@@ -105,12 +129,38 @@ async function carregarFila() {
       listaFila.appendChild(li);
     });
   }
+    async function carregarAgoraCantando() {
+      const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&nome=eq.AGORA_CANTANDO&limit=1`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
 
-carregarFila();
+      const data = await res.json();
+      const agora = data[0];
 
+      const painelAgoraCantando = document.getElementById('agoraCantando');
+
+      if (!agora) {
+        painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
+      } else {
+        painelAgoraCantando.innerHTML = `
+          <strong>${agora.nome === 'AGORA_CANTANDO' ? '' : agora.nome}</strong>
+          ${agora.musica}<br>
+          ⏰ ${agora.horario}<br>
+          ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+        `;
+      }
+    }
+
+
+  carregarFila();
+  carregarAgoraCantando();
   </script>
 </body>
 </html>
+
 
 
 
