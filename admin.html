@@ -66,57 +66,47 @@
     </ul>
   </div>
 
-  <script>
-    const listaAdmin = document.getElementById('listaAdmin');
-    const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
+  <!-- Substitua o <script> atual por este -->
+<script>
+  const listaAdmin = document.getElementById('listaAdmin');
+  const painelAgoraCantando = document.getElementById('agoraCantando');
 
-    async function carregarFila() {
-  const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`
-    }
-  });
+  const supabaseUrl = 'https://SEU_PROJETO.supabase.co';
+  const supabaseKey = 'SUA_ANON_KEY';
 
-  const data = await res.json();
-  data.sort((a, b) => a.id - b.id); // ordena pela ordem de chegada
+  // Guarda o estado atual do que está sendo cantado
+  let musicaAtual = null;
 
-  listaAdmin.innerHTML = "";
-  data.forEach((item, index) => {
-    const posicao = `${index + 1}º`;
-
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <div><strong>${posicao} – ${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
-      ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
-      <div class="botoes">
-        <button class="priorizar" onclick="priorizar(${item.id})">🔝 Priorizar</button>
-        <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
-      </div>
-    `;
-    listaAdmin.appendChild(li);
-  });
-}
-
-    
-  async function remover(id) {
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
-      method: 'DELETE',
+  async function carregarFila() {
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
       headers: {
         apikey: supabaseKey,
         Authorization: `Bearer ${supabaseKey}`
       }
     });
-    if (res.ok) {
-      carregarFila(); // recarrega a lista
-    } else {
-      alert('Erro ao remover.');
-    }
+
+    const data = await res.json();
+    data.sort((a, b) => a.id - b.id); // ordem de chegada
+
+    listaAdmin.innerHTML = "";
+    data.forEach((item, index) => {
+      const posicao = `${index + 1}º`;
+
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <div><strong>${posicao} – ${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
+        ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
+        <div class="botoes">
+          <button class="cantar" onclick="cantarAgora(${item.id})">🎤 Cantar agora!</button>
+          <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
+        </div>
+      `;
+      listaAdmin.appendChild(li);
+    });
   }
 
-  async function priorizar(id) {
-  // 1. Pega o item
+  async function cantarAgora(id) {
+    // Pega os dados do item
     const resGet = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
       headers: {
         apikey: supabaseKey,
@@ -125,7 +115,7 @@
     });
     const [item] = await resGet.json();
 
-    // 2. Remove o item
+    // Remove do Supabase
     await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
       method: 'DELETE',
       headers: {
@@ -134,28 +124,43 @@
       }
     });
 
-  // 3. Reinsere o item
-    await fetch(`${supabaseUrl}/rest/v1/fila`, {
-      method: 'POST',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        nome: item.nome,
-        musica: item.musica,
-        youtube: item.youtube,
-        horario: item.horario
-      })
-    });
-
+    // Atualiza o painel "Agora cantando:"
+    musicaAtual = item;
+    atualizarAgoraCantando();
     carregarFila();
   }
-  carregarFila();
 
-  </script>
+  async function remover(id) {
+    await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+    carregarFila();
+  }
+
+  function atualizarAgoraCantando() {
+    if (!musicaAtual) {
+      painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
+    } else {
+      painelAgoraCantando.innerHTML = `
+        <strong>${musicaAtual.nome}</strong><br>
+        ${musicaAtual.musica}<br>
+        ⏰ ${musicaAtual.horario}<br>
+        ${musicaAtual.youtube ? `<a href="${musicaAtual.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+      `;
+    }
+  }
+
+  // Inicializa
+  atualizarAgoraCantando();
+  carregarFila();
+</script>
+
 </body>
 </html>
+
 
 
