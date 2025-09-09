@@ -131,12 +131,13 @@
     });
   }
  async function carregarAgoraCantando() {
-  const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&nome=eq.AGORA_CANTANDO&limit=1`, {
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`
-    }
-  });
+  const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
+  headers: {
+    apikey: supabaseKey,
+    Authorization: `Bearer ${supabaseKey}`
+  }
+});
+
 
   const data = await res.json();
   const agora = data[0];
@@ -147,11 +148,12 @@
     painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
   } else {
     painelAgoraCantando.innerHTML = `
-      <strong>🎵 ${agora.musica}</strong><br>
-      👤 ${agora.nome !== "AGORA_CANTANDO" ? agora.nome : "(sem nome)"}<br>
-      ⏰ ${agora.horario}<br>
-      ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
-    `;
+  <strong>🎵 ${agora.musica}</strong><br>
+  👤 ${agora.nome}<br>
+  ⏰ ${agora.horario}<br>
+  ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+`;
+
   }
 }
 
@@ -182,31 +184,32 @@
   });
 
   // 3. Deletar entrada anterior de "AGORA_CANTANDO"
-  await fetch(`${supabaseUrl}/rest/v1/fila?nome=eq.AGORA_CANTANDO`, {
-    method: 'DELETE',
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`
-    }
-  });
+  // Remover entrada anterior com status AGORA_CANTANDO
+await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
+  method: 'DELETE',
+  headers: {
+    apikey: supabaseKey,
+    Authorization: `Bearer ${supabaseKey}`
+  }
+});
 
-  // 4. Inserir nova entrada como "AGORA_CANTANDO"
-  await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
-    method: 'POST',
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      nome: item.nome, // mantém o nome original da pessoa
-      musica: item.musica,
-      youtube: item.youtube,
-      horario: item.horario,
-      status: "AGORA_CANTANDO"
-    })
+// Inserir nova música com status AGORA_CANTANDO
+await fetch(`${supabaseUrl}/rest/v1/fila`, {
+  method: 'POST',
+  headers: {
+    apikey: supabaseKey,
+    Authorization: `Bearer ${supabaseKey}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    nome: item.nome,            // Nome da pessoa
+    musica: item.musica,
+    youtube: item.youtube,
+    horario: item.horario,
+    status: "AGORA_CANTANDO"   // <<< ESSENCIAL
+  })
+});
 
-  });
 
   carregarFila();
   carregarAgoraCantando(); // Atualiza a área visual
@@ -305,6 +308,7 @@
 
 </body>
 </html>
+
 
 
 
