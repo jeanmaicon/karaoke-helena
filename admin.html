@@ -151,7 +151,6 @@
     const resGet = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
       headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` }
     });
-
     const [item] = await resGet.json();
     if (!item) return alert('Música não encontrada.');
 
@@ -180,14 +179,12 @@
   }
 
   async function pularMusica() {
-    // Apaga atual (se houver)
     await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
       method: 'DELETE',
       headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` }
     });
 
-    // Pega próxima da fila
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=neq.AGORA_CANTANDO&order=id.asc&limit=1`, {
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=not.eq.AGORA_CANTANDO&order=id.asc&limit=1`, {
       headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` }
     });
 
@@ -195,13 +192,11 @@
     const proxima = data[0];
     if (!proxima) return;
 
-    // Remove da fila
     await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${proxima.id}`, {
       method: 'DELETE',
       headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` }
     });
 
-    // Adiciona como Agora Cantando
     await fetch(`${supabaseUrl}/rest/v1/fila`, {
       method: 'POST',
       headers: {
@@ -217,7 +212,6 @@
   }
 
   async function voltarParaFila() {
-    // Pega a atual
     const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
       headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` }
     });
@@ -226,13 +220,11 @@
     const atual = data[0];
 
     if (atual) {
-      // Remove atual
       await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${atual.id}`, {
         method: 'DELETE',
         headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` }
       });
 
-      // Reinsere no fim da fila
       await fetch(`${supabaseUrl}/rest/v1/fila`, {
         method: 'POST',
         headers: {
@@ -249,7 +241,6 @@
       });
     }
 
-    // Coloca próxima da fila
     await pularMusica();
   }
 
@@ -261,7 +252,6 @@
     carregarFila();
   }
 
-  // Inicializar
   carregarFila();
   carregarAgoraCantando();
   setInterval(() => {
