@@ -131,7 +131,7 @@
     });
   }
   async function carregarAgoraCantando() {
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&nome=eq.AGORA_CANTANDO&limit=1`, {
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
       headers: {
         apikey: supabaseKey,
         Authorization: `Bearer ${supabaseKey}`
@@ -147,12 +147,14 @@
     painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
   } else {
     painelAgoraCantando.innerHTML = `
-      <strong>${agora.musica}</strong><br>
+      <strong>🎵 ${agora.musica}</strong><br>
+      👤 ${agora.nome !== "AGORA_CANTANDO" ? agora.nome : "(sem nome)"}<br>
       ⏰ ${agora.horario}<br>
       ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
     `;
   }
 }
+
 
 
  async function cantarAgora(id) {
@@ -197,11 +199,13 @@
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      nome: "AGORA_CANTANDO",
+      nome: item.nome, // mantém o nome original da pessoa
       musica: item.musica,
       youtube: item.youtube,
-      horario: item.horario
+      horario: item.horario,
+      status: "AGORA_CANTANDO"
     })
+
   });
 
   // 5. Atualiza a lista e o painel
@@ -301,6 +305,7 @@
 
 </body>
 </html>
+
 
 
 
