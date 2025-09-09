@@ -72,30 +72,33 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
 
     async function carregarFila() {
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
+  const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`
+    }
+  });
 
-    const data = await res.json();
-    data.sort((a, b) => a.id - b.id); // manter ordem
+  const data = await res.json();
+  data.sort((a, b) => a.id - b.id); // ordena pela ordem de chegada
 
-    listaAdmin.innerHTML = "";
-    data.forEach((item) => {
-      const li = document.createElement('li');
-      li.innerHTML = `
-        <div><strong>${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
-        ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
-        <div class="botoes">
-          <button class="priorizar" onclick="priorizar(${item.id})">🔝 Priorizar</button>
-          <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
-        </div>
-      `;
-      listaAdmin.appendChild(li);
+  listaAdmin.innerHTML = "";
+  data.forEach((item, index) => {
+    const posicao = `${index + 1}º`;
+
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div><strong>${posicao} – ${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
+      ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
+      <div class="botoes">
+        <button class="priorizar" onclick="priorizar(${item.id})">🔝 Priorizar</button>
+        <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
+      </div>
+    `;
+    listaAdmin.appendChild(li);
   });
 }
+
     
   async function remover(id) {
     const res = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
@@ -154,4 +157,5 @@
   </script>
 </body>
 </html>
+
 
