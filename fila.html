@@ -70,41 +70,36 @@
   </div>
 
   <script>
-    // Aqui entra a lógica de conexão com Supabase ou backend real
-    const listaFila = document.getElementById('listaFila');
+    const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
 
-    // Simulação de dados
-    const filaExemplo = [
-      {
-        nome: "Alice",
-        musica: "Let It Go - Idina Menzel",
-        youtube: "https://youtu.be/L0MK7qz13bU",
-        horario: "16:42"
-      },
-      {
-        nome: "João",
-        musica: "Show das Poderosas - Anitta",
-        youtube: "",
-        horario: "16:45"
-      }
-    ];
-
-    function carregarFila() {
-      listaFila.innerHTML = "";
-      filaExemplo.forEach(item => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <div class="nome">${item.nome}</div>
-          <div>${item.musica}</div>
-          <div>⏰ ${item.horario}</div>
-          ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
-        `;
-        listaFila.appendChild(li);
-      });
+async function carregarFila() {
+  const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`
     }
+  });
 
-    // Simulando carregamento da fila
-    carregarFila();
+  const data = await res.json();
+  data.sort((a, b) => a.id - b.id); // Ordena por ordem de entrada
+  listaFila.innerHTML = "";
+
+  data.forEach(item => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="nome">${item.nome}</div>
+      <div>${item.musica}</div>
+      <div>⏰ ${item.horario}</div>
+      ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+    `;
+    listaFila.appendChild(li);
+  });
+}
+
+carregarFila();
+
   </script>
 </body>
 </html>
+
