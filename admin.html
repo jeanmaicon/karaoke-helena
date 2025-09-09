@@ -182,7 +182,7 @@
   });
 
   // 3. Remove a música anterior que estava como "AGORA_CANTANDO"
-  await fetch(`${supabaseUrl}/rest/v1/fila?nome=eq.AGORA_CANTANDO`, {
+  await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
     method: 'DELETE',
     headers: {
       apikey: supabaseKey,
@@ -190,23 +190,24 @@
     }
   });
 
+
   // 4. Insere a nova música como "AGORA_CANTANDO"
   await fetch(`${supabaseUrl}/rest/v1/fila`, {
-    method: 'POST',
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      nome: item.nome, // mantém o nome original da pessoa
-      musica: item.musica,
-      youtube: item.youtube,
-      horario: item.horario,
-      status: "AGORA_CANTANDO"
-    })
+  method: 'POST',
+  headers: {
+    apikey: supabaseKey,
+    Authorization: `Bearer ${supabaseKey}`,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    nome: item.nome,              // mantém o nome da pessoa
+    musica: item.musica,
+    youtube: item.youtube,
+    horario: item.horario,
+    status: "AGORA_CANTANDO"      // novo campo para identificar
+  })
+});
 
-  });
 
   // 5. Atualiza a lista e o painel
   carregarFila();
@@ -305,6 +306,7 @@
 
 </body>
 </html>
+
 
 
 
