@@ -113,10 +113,10 @@
 
     const data = await res.json();
     const somenteFila = data.filter(item => item.status !== 'AGORA_CANTANDO');
+    somenteFila.sort((a, b) => a.id - b.id);
     somenteFila.forEach((item, index) => {
   // construir e exibir a fila
     });
-    somenteFila.sort((a, b) => a.id - b.id);
     
 
     listaAdmin.innerHTML = "";
@@ -273,10 +273,11 @@ data.forEach((item, index) => {
 
     const data = await res.json();
     const somenteFila = data.filter(item => item.status !== 'AGORA_CANTANDO');
+    somenteFila.sort((a, b) => a.id - b.id);
     somenteFila.forEach((item, index) => {
   // construir e exibir a fila
     });
-    somenteFila.sort((a, b) => a.id - b.id);
+    
    
 
     listaAdmin.innerHTML = "";
@@ -327,6 +328,7 @@ data.forEach((item, index) => {
 
 </body>
 </html>
+
 
 
 
