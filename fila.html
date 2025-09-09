@@ -101,27 +101,12 @@ async function carregarFila() {
     });
   }
 
-  const data = await res.json();
-  data.sort((a, b) => a.id - b.id); // Ordena por ordem de entrada
-  listaFila.innerHTML = "";
-
-  data.forEach(item => {
-    const li = document.createElement('li');
-    li.innerHTML = `
-      <div class="nome">${item.nome}</div>
-      <div>${item.musica}</div>
-      <div>⏰ ${item.horario}</div>
-      ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
-    `;
-    listaFila.appendChild(li);
-  });
-}
-
 carregarFila();
 
   </script>
 </body>
 </html>
+
 
 
 
