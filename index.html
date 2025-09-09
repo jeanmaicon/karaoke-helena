@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Karaokê da Helena – 4 Anos</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom, #aeeafd, #ffffff);
+      background-image: url('https://i.ibb.co/zrZT2R9/frozen-bg.jpg'); /* Exemplo de fundo Frozen */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      text-align: center;
+    }
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      margin: 50px auto;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px #b3e5fc;
+    }
+    h1 {
+      font-size: 26px;
+      color: #0077c2;
+      margin-bottom: 20px;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 2px solid #aeeafd;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    button {
+      background-color: #ffd6e8;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #f8b5d1;
+    }
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      color: #0077c2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎤 Karaokê da Helena – 4 Anos ❄️</h1>
+    <form id="formEntrada">
+      <input type="text" placeholder="Seu nome" id="nome" required />
+      <input type="text" placeholder="Nome da música e artista" id="musica" required />
+      <input type="text" placeholder="Link do YouTube (opcional)" id="youtube" />
+      <button type="submit">Adicionar à Fila 🎶</button>
+    </form>
+    <a href="fila.html">Ver Fila de Músicas 🎵</a>
+  </div>
+
+  <script>
+    document.getElementById('formEntrada').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('nome').value;
+      const musica = document.getElementById('musica').value;
+      const youtube = document.getElementById('youtube').value;
+
+      const entrada = {
+        nome,
+        musica,
+        youtube,
+        horario: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      // Aqui você colocará a lógica para enviar para Supabase/Firebase
+      console.log('Simulando envio:', entrada);
+      alert('Entrada adicionada à fila!');
+
+      // Limpa os campos
+      document.getElementById('formEntrada').reset();
+    });
+  </script>
+</body>
+</html>

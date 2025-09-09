@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fila de Músicas – Karaokê da Helena</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom, #aeeafd, #ffffff);
+      background-image: url('https://i.ibb.co/zrZT2R9/frozen-bg.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      text-align: center;
+    }
+    .container {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      margin: 50px auto;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px #b3e5fc;
+    }
+    h1 {
+      font-size: 24px;
+      color: #0077c2;
+      margin-bottom: 20px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 10px 0;
+      padding: 12px;
+      background-color: #f0f8ff;
+      border-radius: 10px;
+      text-align: left;
+    }
+    .nome {
+      font-weight: bold;
+    }
+    .link {
+      display: block;
+      margin-top: 5px;
+      color: #0077c2;
+      font-size: 14px;
+    }
+    a.voltar {
+      display: inline-block;
+      margin-top: 20px;
+      color: #0077c2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎵 Fila de Músicas</h1>
+    <ul id="listaFila">
+      <li>Carregando fila...</li>
+    </ul>
+    <a class="voltar" href="index.html">← Voltar para enviar nova música</a>
+  </div>
+
+  <script>
+    // Aqui entra a lógica de conexão com Supabase ou backend real
+    const listaFila = document.getElementById('listaFila');
+
+    // Simulação de dados
+    const filaExemplo = [
+      {
+        nome: "Alice",
+        musica: "Let It Go - Idina Menzel",
+        youtube: "https://youtu.be/L0MK7qz13bU",
+        horario: "16:42"
+      },
+      {
+        nome: "João",
+        musica: "Show das Poderosas - Anitta",
+        youtube: "",
+        horario: "16:45"
+      }
+    ];
+
+    function carregarFila() {
+      listaFila.innerHTML = "";
+      filaExemplo.forEach(item => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="nome">${item.nome}</div>
+          <div>${item.musica}</div>
+          <div>⏰ ${item.horario}</div>
+          ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+        `;
+        listaFila.appendChild(li);
+      });
+    }
+
+    // Simulando carregamento da fila
+    carregarFila();
+  </script>
+</body>
+</html>
