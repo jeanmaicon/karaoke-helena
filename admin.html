@@ -56,6 +56,7 @@
     }
     .remover { background-color: #f44336; color: white; }
     .pular { background-color: #ff9800; color: white; }
+    .voltar { background-color: #90caf9; color: #000; }
     .agora-container {
       background-color: #ffd6e8;
       padding: 30px;
@@ -81,7 +82,10 @@
     <div id="agoraCantando" class="painel-musica">
       <em>Carregando música atual...</em>
     </div>
-    <button class="pular" onclick="pularMusica()">⏭️ Pular música</button>
+    <div class="botoes">
+      <button class="pular" onclick="pularMusica()">⏭️ Pular música</button>
+      <button class="voltar" onclick="voltarParaFila()">🔙 Voltar para fila</button>
+    </div>
   </div>
 
   <div class="container">
@@ -163,7 +167,7 @@
       return;
     }
 
-    // Remover entrada anterior com status AGORA_CANTANDO
+    // Remove entrada anterior AGORA_CANTANDO
     await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
       method: 'DELETE',
       headers: {
@@ -172,7 +176,7 @@
       }
     });
 
-    // Remover item da fila
+    // Remove item da fila
     await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
       method: 'DELETE',
       headers: {
@@ -181,7 +185,7 @@
       }
     });
 
-    // Inserir como AGORA_CANTANDO
+    // Insere novo AGORA_CANTANDO
     await fetch(`${supabaseUrl}/rest/v1/fila`, {
       method: 'POST',
       headers: {
@@ -202,6 +206,113 @@
     carregarAgoraCantando();
   }
 
+  async function pularMusica() {
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+
+    const dataAgora = await res.json();
+    const atual = dataAgora[0];
+
+    if (atual) {
+      // Apaga música atual
+      await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${atual.id}`, {
+        method: 'DELETE',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+    }
+
+    // Busca próxima da fila
+    const resFila = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=neq.AGORA_CANTANDO&order=id.asc&limit=1`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+
+    const dataFila = await resFila.json();
+    const proxima = dataFila[0];
+
+    if (proxima) {
+      // Remove da fila
+      await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${proxima.id}`, {
+        method: 'DELETE',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+
+      // Adiciona como AGORA_CANTANDO
+      await fetch(`${supabaseUrl}/rest/v1/fila`, {
+        method: 'POST',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nome: proxima.nome,
+          musica: proxima.musica,
+          youtube: proxima.youtube,
+          horario: proxima.horario,
+          status: "AGORA_CANTANDO"
+        })
+      });
+    }
+
+    carregarFila();
+    carregarAgoraCantando();
+  }
+
+  async function voltarParaFila() {
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+
+    const data = await res.json();
+    const atual = data[0];
+
+    if (atual) {
+      // Deleta do AGORA_CANTANDO
+      await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${atual.id}`, {
+        method: 'DELETE',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+
+      // Reinsere no final da fila (sem status especial)
+      await fetch(`${supabaseUrl}/rest/v1/fila`, {
+        method: 'POST',
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nome: atual.nome,
+          musica: atual.musica,
+          youtube: atual.youtube,
+          horario: atual.horario
+        })
+      });
+    }
+
+    carregarFila();
+    carregarAgoraCantando();
+  }
+
   async function remover(id) {
     await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
       method: 'DELETE',
@@ -211,17 +322,6 @@
       }
     });
     carregarFila();
-  }
-
-  async function pularMusica() {
-    await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
-      method: 'DELETE',
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`
-      }
-    });
-    carregarAgoraCantando();
   }
 
   // Inicial
