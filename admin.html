@@ -163,18 +163,22 @@
 
 
  async function cantarAgora(id) {
-  // 1. Buscar o item pelo ID
+  // 1. Buscar o item da fila
   const resGet = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
     headers: {
       apikey: supabaseKey,
       Authorization: `Bearer ${supabaseKey}`
     }
   });
+
   const [item] = await resGet.json();
 
-  if (!item) return alert('Música não encontrada.');
+  if (!item) {
+    alert('Música não encontrada.');
+    return;
+  }
 
-  // 2. Deletar o item da fila
+  // 2. Remover o item original da fila
   await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
     method: 'DELETE',
     headers: {
@@ -183,37 +187,37 @@
     }
   });
 
-  // 3. Deletar entrada anterior de "AGORA_CANTANDO"
-  // Remover entrada anterior com status AGORA_CANTANDO
-await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
-  method: 'DELETE',
-  headers: {
-    apikey: supabaseKey,
-    Authorization: `Bearer ${supabaseKey}`
-  }
-});
+  // 3. Remover entrada anterior com status AGORA_CANTANDO
+  await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
+    method: 'DELETE',
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`
+    }
+  });
 
-// Inserir nova música com status AGORA_CANTANDO
-await fetch(`${supabaseUrl}/rest/v1/fila`, {
-  method: 'POST',
-  headers: {
-    apikey: supabaseKey,
-    Authorization: `Bearer ${supabaseKey}`,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    nome: item.nome,            // Nome da pessoa
-    musica: item.musica,
-    youtube: item.youtube,
-    horario: item.horario,
-    status: "AGORA_CANTANDO"   // <<< ESSENCIAL
-  })
-});
+  // 4. Inserir novo item com status AGORA_CANTANDO
+  await fetch(`${supabaseUrl}/rest/v1/fila`, {
+    method: 'POST',
+    headers: {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      nome: item.nome,
+      musica: item.musica,
+      youtube: item.youtube,
+      horario: item.horario,
+      status: "AGORA_CANTANDO"
+    })
+  });
 
-
+  // 5. Atualizar a visualização
   carregarFila();
-  carregarAgoraCantando(); // Atualiza a área visual
+  carregarAgoraCantando();
 }
+
 
 
   async function remover(id) {
@@ -261,6 +265,7 @@ await fetch(`${supabaseUrl}/rest/v1/fila`, {
     });
 
     const data = await res.json();
+    const somenteFila = data.filter(item => item.status !== 'AGORA_CANTANDO');
     data.sort((a, b) => a.id - b.id);
 
     listaFila.innerHTML = "";
@@ -308,6 +313,7 @@ await fetch(`${supabaseUrl}/rest/v1/fila`, {
 
 </body>
 </html>
+
 
 
 
