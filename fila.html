@@ -9,6 +9,7 @@
       font-family: 'Font-On-A-Stick';
       src: url('Font-On-A-Stick.ttf') format('truetype');
     }
+
     body {
       font-family: 'Font-On-A-Stick', cursive;
       background: linear-gradient(to bottom, #aeeafd, #ffffff);
@@ -21,6 +22,7 @@
       color: #333;
       text-align: center;
     }
+
     .container {
       background-color: rgba(255, 255, 255, 0.8);
       padding: 30px;
@@ -30,16 +32,19 @@
       border-radius: 20px;
       box-shadow: 0 0 10px #b3e5fc;
     }
+
     h1 {
       font-size: 30px;
       color: #0077c2;
       margin-bottom: 15px;
       letter-spacing: 2px; 
     }
+
     ul {
       list-style: none;
       padding: 0;
     }
+
     li {
       margin: 10px 0;
       padding: 12px;
@@ -47,15 +52,18 @@
       border-radius: 10px;
       text-align: left;
     }
+
     .nome {
       font-weight: bold;
     }
+
     .link {
       display: block;
       margin-top: 5px;
       color: #0077c2;
       font-size: 14px;
     }
+
     a.voltar {
       display: inline-block;
       margin-top: 20px;
@@ -63,6 +71,7 @@
       text-decoration: none;
       font-weight: bold;
     }
+
     .agora-container {
       background-color: #ffd6e8;
       padding: 30px;
@@ -81,7 +90,6 @@
       font-size: 16px;
       color: #333;
     }
-
   </style>
 </head>
 <body>
@@ -107,6 +115,34 @@
     const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
 
+    async function carregarFila() {
+      const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+
+      const data = await res.json();
+      const somenteFila = data.filter(item => item.status !== 'AGORA_CANTANDO');
+      somenteFila.sort((a, b) => a.id - b.id);
+
+      listaFila.innerHTML = "";
+
+      somenteFila.forEach((item, index) => {
+        const posicao = `${index + 1}º`;
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="nome">${posicao} – ${item.nome}</div>
+          <div>${item.musica}</div>
+          <div>⏰ ${item.horario}</div>
+          ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+        `;
+        listaFila.appendChild(li);
+      });
+    }
+
     async function carregarAgoraCantando() {
       const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
         headers: {
@@ -130,45 +166,15 @@
       }
     }
 
-    async function carregarFila() {
-      const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`
-        }
-      });
+    // Carregamento inicial
+    carregarFila();
+    carregarAgoraCantando();
 
-      const data = await res.json();
-
-      // ❌ Remover da lista quem está com status AGORA_CANTANDO
-      const somenteFila = data.filter(item => item.status !== 'AGORA_CANTANDO');
-      somenteFila.sort((a, b) => a.id - b.id);
-
-      listaFila.innerHTML = "";
-
-      somenteFila.forEach((item, index) => {
-        const posicao = `${index + 1}º`;
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <div class="nome">${posicao} – ${item.nome}</div>
-          <div>${item.musica}</div>
-          <div>⏰ ${item.horario}</div>
-          ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
-        `;
-        listaFila.appendChild(li);
-      });
-    }
-
-    // 🔁 Atualizar automaticamente a cada 10 segundos
+    // 🔁 Atualizações automáticas a cada 2 segundos
     setInterval(() => {
       carregarFila();
       carregarAgoraCantando();
     }, 2000);
-
-    // ⏱️ Carrega ao iniciar
-    carregarFila();
-    carregarAgoraCantando();
   </script>
 </body>
 </html>
-
