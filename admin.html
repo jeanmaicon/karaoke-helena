@@ -55,8 +55,8 @@
       font-size: 14px;
     }
     .remover { background-color: #f44336; color: white; }
-    .pular { background-color: #ff9800; color: white; }
-    .voltar { background-color: #90caf9; color: #000; }
+    .pular   { background-color: #ff9800; color: white; }
+    .voltar  { background-color: #90caf9; color: #000; }
     .agora-container {
       background-color: #ffd6e8;
       padding: 30px;
@@ -77,6 +77,7 @@
   </style>
 </head>
 <body>
+
   <div class="agora-container">
     <h2>🎶 Agora cantando:</h2>
     <div id="agoraCantando" class="painel-musica">
@@ -97,7 +98,7 @@
 
 <script>
   const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
-  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c'; // insira sua chave completa
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c'; // 🔒 Insira sua chave completa aqui
 
   const listaAdmin = document.getElementById('listaAdmin');
   const painelAgoraCantando = document.getElementById('agoraCantando');
@@ -179,6 +180,9 @@
       }
     });
 
+    const { id, ...novoItem } = item;
+    novoItem.status = 'AGORA_CANTANDO';
+
     await fetch(`${supabaseUrl}/rest/v1/fila`, {
       method: 'POST',
       headers: {
@@ -186,7 +190,7 @@
         Authorization: `Bearer ${supabaseKey}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ ...item, status: 'AGORA_CANTANDO' })
+      body: JSON.stringify(novoItem)
     });
 
     carregarFila();
@@ -194,7 +198,7 @@
   }
 
   async function pularMusica() {
-    // Apaga atual (se houver)
+    // Remove música atual
     await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
       method: 'DELETE',
       headers: {
@@ -203,13 +207,14 @@
       }
     });
 
-    // Pega a próxima da fila
-    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=neq.AGORA_CANTANDO&order=id.asc&limit=1`, {
+    // Busca próxima música da fila
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&or=(status.is.null,status.neq.AGORA_CANTANDO)&order=id.asc&limit=1`, {
       headers: {
         apikey: supabaseKey,
         Authorization: `Bearer ${supabaseKey}`
       }
     });
+
     const data = await res.json();
     const proxima = data[0];
     if (!proxima) return;
@@ -223,7 +228,9 @@
       }
     });
 
-    // Coloca como AGORA_CANTANDO
+    const { id, ...novaEntrada } = proxima;
+    novaEntrada.status = 'AGORA_CANTANDO';
+
     await fetch(`${supabaseUrl}/rest/v1/fila`, {
       method: 'POST',
       headers: {
@@ -231,7 +238,7 @@
         Authorization: `Bearer ${supabaseKey}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ ...proxima, status: 'AGORA_CANTANDO' })
+      body: JSON.stringify(novaEntrada)
     });
 
     carregarFila();
@@ -239,7 +246,7 @@
   }
 
   async function voltarParaFila() {
-    // Pega atual
+    // Pega música atual
     const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
       headers: {
         apikey: supabaseKey,
@@ -250,7 +257,6 @@
     const atual = data[0];
 
     if (atual) {
-      // Remove atual
       await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${atual.id}`, {
         method: 'DELETE',
         headers: {
@@ -259,7 +265,9 @@
         }
       });
 
-      // Reinsere no fim da fila
+      const { id, ...novo } = atual;
+      novo.status = null;
+
       await fetch(`${supabaseUrl}/rest/v1/fila`, {
         method: 'POST',
         headers: {
@@ -267,18 +275,11 @@
           Authorization: `Bearer ${supabaseKey}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          nome: atual.nome,
-          musica: atual.musica,
-          youtube: atual.youtube,
-          horario: atual.horario,
-          status: null
-        })
+        body: JSON.stringify(novo)
       });
     }
 
-    // Coloca próxima da fila
-    await pularMusica();
+    await pularMusica(); // chama próxima automaticamente
   }
 
   async function remover(id) {
@@ -292,10 +293,9 @@
     carregarFila();
   }
 
+  // Inicializa
   carregarFila();
   carregarAgoraCantando();
-
-  // Atualiza automaticamente
   setInterval(() => {
     carregarFila();
     carregarAgoraCantando();
@@ -303,4 +303,3 @@
 </script>
 </body>
 </html>
-
