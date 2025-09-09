@@ -55,6 +55,7 @@
       font-size: 14px;
     }
     .remover { background-color: #f44336; color: white; }
+    .pular { background-color: #ff9800; color: white; }
     .agora-container {
       background-color: #ffd6e8;
       padding: 30px;
@@ -71,7 +72,7 @@
       margin-top: 10px;
       font-size: 16px;
       color: #333;
-    } 
+    }
   </style>
 </head>
 <body>
@@ -80,6 +81,7 @@
     <div id="agoraCantando" class="painel-musica">
       <em>Carregando música atual...</em>
     </div>
+    <button class="pular" onclick="pularMusica()">⏭️ Pular música</button>
   </div>
 
   <div class="container">
@@ -148,7 +150,6 @@
   }
 
   async function cantarAgora(id) {
-    // 1. Buscar o item da fila
     const resGet = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
       headers: {
         apikey: supabaseKey,
@@ -162,7 +163,7 @@
       return;
     }
 
-    // 2. Remover entrada anterior com status AGORA_CANTANDO
+    // Remover entrada anterior com status AGORA_CANTANDO
     await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
       method: 'DELETE',
       headers: {
@@ -171,7 +172,7 @@
       }
     });
 
-    // 3. Remover o item original da fila
+    // Remover item da fila
     await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
       method: 'DELETE',
       headers: {
@@ -180,7 +181,7 @@
       }
     });
 
-    // 4. Inserir nova entrada com status AGORA_CANTANDO
+    // Inserir como AGORA_CANTANDO
     await fetch(`${supabaseUrl}/rest/v1/fila`, {
       method: 'POST',
       headers: {
@@ -197,9 +198,8 @@
       })
     });
 
-    // 5. Atualiza visualmente
-    await carregarFila();
-    await carregarAgoraCantando();
+    carregarFila();
+    carregarAgoraCantando();
   }
 
   async function remover(id) {
@@ -213,9 +213,26 @@
     carregarFila();
   }
 
-  // Inicializa
-  carregarAgoraCantando();
+  async function pularMusica() {
+    await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
+      method: 'DELETE',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+    carregarAgoraCantando();
+  }
+
+  // Inicial
   carregarFila();
+  carregarAgoraCantando();
+
+  // Atualização automática
+  setInterval(() => {
+    carregarFila();
+    carregarAgoraCantando();
+  }, 2000);
 </script>
 </body>
 </html>
