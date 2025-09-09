@@ -68,53 +68,90 @@
 
   <script>
     const listaAdmin = document.getElementById('listaAdmin');
+    const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
 
-    // Simulando os dados (depois isso será conectado ao Supabase)
-    let fila = [
-      {
-        id: 1,
-        nome: "Alice",
-        musica: "Let It Go - Idina Menzel",
-        youtube: "https://youtu.be/L0MK7qz13bU",
-        horario: "16:42"
-      },
-      {
-        id: 2,
-        nome: "João",
-        musica: "Show das Poderosas - Anitta",
-        youtube: "",
-        horario: "16:45"
+    async function carregarFila() {
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
       }
-    ];
+    });
 
-    function renderizarFila() {
-      listaAdmin.innerHTML = "";
-      fila.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-          <div><strong>${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
-          ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
-          <div class="botoes">
-            <button class="priorizar" onclick="priorizar(${index})">🔝 Priorizar</button>
-            <button class="remover" onclick="remover(${index})">🗑️ Remover</button>
-          </div>
-        `;
-        listaAdmin.appendChild(li);
-      });
+    const data = await res.json();
+    data.sort((a, b) => a.id - b.id); // manter ordem
+
+    listaAdmin.innerHTML = "";
+    data.forEach((item) => {
+      const li = document.createElement('li');
+      li.innerHTML = `
+        <div><strong>${item.nome}</strong> – ${item.musica} <br>⏰ ${item.horario}</div>
+        ${item.youtube ? `<div><a href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a></div>` : ""}
+        <div class="botoes">
+          <button class="priorizar" onclick="priorizar(${item.id})">🔝 Priorizar</button>
+          <button class="remover" onclick="remover(${item.id})">🗑️ Remover</button>
+        </div>
+      `;
+      listaAdmin.appendChild(li);
+  });
+}
+    
+  async function remover(id) {
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+    if (res.ok) {
+      carregarFila(); // recarrega a lista
+    } else {
+      alert('Erro ao remover.');
     }
+  }
 
-    function priorizar(index) {
-      const item = fila.splice(index, 1)[0];
-      fila.unshift(item);
-      renderizarFila();
-    }
+  async function priorizar(id) {
+  // 1. Pega o item
+    const resGet = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+    const [item] = await resGet.json();
 
-    function remover(index) {
-      fila.splice(index, 1);
-      renderizarFila();
-    }
+    // 2. Remove o item
+    await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
+      method: 'DELETE',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
 
-    renderizarFila();
+  // 3. Reinsere o item
+    await fetch(`${supabaseUrl}/rest/v1/fila`, {
+      method: 'POST',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        nome: item.nome,
+        musica: item.musica,
+        youtube: item.youtube,
+        horario: item.horario
+      })
+    });
+
+    carregarFila();
+  }
+  carregarFila();
+
   </script>
 </body>
 </html>
+
