@@ -75,12 +75,31 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
 
 async function carregarFila() {
-  const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
-    headers: {
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`
-    }
-  });
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+
+    const data = await res.json();
+    data.sort((a, b) => a.id - b.id); // ordena por ordem de chegada
+
+    listaFila.innerHTML = "";
+
+    data.forEach((item, index) => {
+      const li = document.createElement('li');
+      const posicao = `${index + 1}º`;
+
+      li.innerHTML = `
+        <div class="nome">${posicao} – ${item.nome}</div>
+        <div>${item.musica}</div>
+        <div>⏰ ${item.horario}</div>
+        ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+      `;
+      listaFila.appendChild(li);
+    });
+  }
 
   const data = await res.json();
   data.sort((a, b) => a.id - b.id); // Ordena por ordem de entrada
@@ -103,5 +122,6 @@ carregarFila();
   </script>
 </body>
 </html>
+
 
 
