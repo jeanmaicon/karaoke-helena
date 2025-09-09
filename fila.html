@@ -70,8 +70,9 @@
   </div>
 
   <script>
+    const listaFila = document.getElementById('listaFila');
     const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
 
 async function carregarFila() {
   const res = await fetch(`${supabaseUrl}/rest/v1/fila?select=*`, {
@@ -102,4 +103,5 @@ carregarFila();
   </script>
 </body>
 </html>
+
 
