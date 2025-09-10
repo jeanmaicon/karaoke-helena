@@ -84,8 +84,8 @@
       <em>Carregando música atual...</em>
     </div>
     <div class="botoes">
-      <button class="pular" onclick="pularMusica()">⏭️ Pular música</button>
-      <button class="voltar" onclick="voltarParaFila()">🔙 Voltar para fila</button>
+      <button class="pular" onclick="pularMusica()">⏭️ Próxima música</button>
+      <button class="voltar" onclick="voltarParaFila()">🔙 Voltar ao fim da fila</button>
     </div>
   </div>
 
@@ -154,7 +154,7 @@
           <strong>🎵 ${agora.musica}</strong><br>
           👤 ${agora.nome}<br>
           ⏰ ${agora.horario}<br>
-          ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+          ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">🎥 Ver no YouTube</a>` : ""}
         `;
       }
     } catch (err) {
@@ -326,5 +326,6 @@
 </script>
 </body>
 </html>
+
 
 
