@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Painel de Monitor – Karaokê da Helena</title>
-  
-  <!-- Fonte estilo digital (semelhante à painel de aeroporto) -->
+
+  <!-- Fonte estilo digital -->
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
   <style>
@@ -17,7 +17,7 @@
 
     body {
       background-color: #000;
-      color: #33ff33;
+      color: #ff1493; /* Rosa choque */
       font-family: 'Share Tech Mono', monospace;
       display: flex;
       flex-direction: column;
@@ -25,16 +25,18 @@
       justify-content: center;
       min-height: 100vh;
       text-align: center;
+      overflow: hidden;
     }
 
     .painel {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1200px;
       padding: 30px;
       background-color: #111;
-      border: 4px solid #33ff33;
+      border: 4px solid #ff1493;
       border-radius: 20px;
-      box-shadow: 0 0 20px #33ff33;
+      box-shadow: 0 0 20px #ff1493;
+      position: relative;
     }
 
     .bloco {
@@ -62,17 +64,43 @@
       font-size: 28px;
     }
 
+    .imagem-esquerda, .imagem-direita {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      max-height: 80%;
+      z-index: 0;
+      opacity: 0.8;
+    }
+
+    .imagem-esquerda {
+      left: -120px;
+    }
+
+    .imagem-direita {
+      right: -120px;
+    }
+
     @media (max-width: 768px) {
-      h1 { font-size: 36px; }
-      h2 { font-size: 28px; }
-      h3 { font-size: 22px; }
-      .linha { font-size: 20px; }
+      h1 { font-size: 32px; }
+      h2 { font-size: 26px; }
+      h3 { font-size: 20px; }
+      .linha { font-size: 18px; }
+
+      .imagem-esquerda,
+      .imagem-direita {
+        display: none;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="painel">
+    <!-- IMAGENS LATERAIS -->
+    <img src="https://i.ibb.co/9HhS1rqg/bg-karaoke-helena-removebg-preview.png" alt="Helena" class="imagem-esquerda">
+    <img src="https://i.ibb.co/qYwqWCrh/Karaoke-da-Julia-1-removebg-preview.png" alt="Julia" class="imagem-direita">
+
     <div class="bloco">
       <h1>🎤 AGORA CANTANDO</h1>
       <div id="agoraNome" class="linha">Carregando nome...</div>
@@ -116,7 +144,7 @@
       document.getElementById('proximoMusica').textContent = proximo ? `🎵 ${proximo.musica}` : '';
     }
 
-    // Atualização inicial
+    // Inicializa
     atualizarPainel();
 
     // Atualização a cada 2 segundos
