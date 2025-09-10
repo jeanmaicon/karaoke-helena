@@ -100,12 +100,21 @@
     letter-spacing: 1px;
     color: #333;
   }
+  .galeria-de-imagens {
+  display: flex; /* Ativa o Flexbox para alinhar os itens internos */
+  justify-content: center; /* Centraliza as imagens horizontalmente */
+  align-items: center; /* Centraliza as imagens verticalmente */
+  gap: 10px; /* Adiciona um pequeno espaço entre as imagens */
+  }
   </style>
 
 </head>
 <body>
   <div class="agora-container">
-    <img src="https://i.ibb.co/9HhS1rqg/bg-karaoke-helena-removebg-preview.png" width="200" height="150"><img src="https://i.ibb.co/qYwqWCrh/Karaoke-da-Julia-1-removebg-preview.png" width="200" height="150">
+    <div class="galeria-de-imagens">
+      <img src="https://i.ibb.co/9HhS1rqg/bg-karaoke-helena-removebg-preview.png" alt="Imagem 1" width="200" height="150">
+      <img src="https://i.ibb.co/qYwqWCrh/Karaoke-da-Julia-1-removebg-preview.png" alt="Imagem 2" width="200" height="150">
+    </div>
     <h1>🎶 Agora cantando:</h1>
     <div id="agoraCantando" class="painel-musica">
       <em>Carregando música atual...</em>
@@ -190,6 +199,7 @@
   </script>
 </body>
 </html>
+
 
 
 
