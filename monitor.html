@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel de Monitor – Karaokê da Helena</title>
+  
+  <!-- Fonte estilo digital (semelhante à painel de aeroporto) -->
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #000;
+      color: #33ff33;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    .painel {
+      width: 100%;
+      max-width: 1000px;
+      padding: 30px;
+      background-color: #111;
+      border: 4px solid #33ff33;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #33ff33;
+    }
+
+    .bloco {
+      margin-bottom: 40px;
+    }
+
+    h1, h2, h3 {
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 48px;
+    }
+
+    h2 {
+      font-size: 38px;
+    }
+
+    h3 {
+      font-size: 30px;
+    }
+
+    .linha {
+      margin: 5px 0;
+      font-size: 28px;
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 36px; }
+      h2 { font-size: 28px; }
+      h3 { font-size: 22px; }
+      .linha { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="painel">
+    <div class="bloco">
+      <h1>🎤 AGORA CANTANDO</h1>
+      <div id="agoraNome" class="linha">Carregando nome...</div>
+      <div id="agoraMusica" class="linha">Carregando música...</div>
+    </div>
+
+    <div class="bloco">
+      <h2>⏭ PRÓXIMO DA FILA</h2>
+      <div id="proximoNome" class="linha">Carregando nome...</div>
+      <div id="proximoMusica" class="linha">Carregando música...</div>
+    </div>
+  </div>
+
+  <script>
+    const supabaseUrl = 'https://uemhcrsoujipgduuznbf.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
+
+    async function atualizarPainel() {
+      // AGORA CANTANDO
+      const resAgora = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+      const [agora] = await resAgora.json();
+
+      document.getElementById('agoraNome').textContent = agora ? `👤 ${agora.nome}` : 'Nenhuma música agora';
+      document.getElementById('agoraMusica').textContent = agora ? `🎵 ${agora.musica}` : '';
+
+      // PRÓXIMO DA FILA
+      const resProximo = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=neq.AGORA_CANTANDO&order=id.asc&limit=1`, {
+        headers: {
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`
+        }
+      });
+      const [proximo] = await resProximo.json();
+
+      document.getElementById('proximoNome').textContent = proximo ? `👤 ${proximo.nome}` : 'Sem próximos na fila';
+      document.getElementById('proximoMusica').textContent = proximo ? `🎵 ${proximo.musica}` : '';
+    }
+
+    // Atualização inicial
+    atualizarPainel();
+
+    // Atualização a cada 2 segundos
+    setInterval(atualizarPainel, 2000);
+  </script>
+</body>
+</html>
