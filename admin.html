@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel de Controle – Karaokê da Helena</title>
+  <title>Painel de Controle – Karaokê da Helena e da Julia</title>
   <style>
     body {
       font-family: 'Font-On-A-Stick', arial;
@@ -73,6 +73,10 @@
       font-size: 16px;
       color: #333;
     }
+    .monitor {
+      background-color: #4caf50;
+      color: black;
+    }
   </style>
 </head>
 <body>
@@ -84,7 +88,8 @@
     </div>
     <div class="botoes">
       <button class="pular" onclick="pularMusica()">⏭️ Próxima música</button>
-      <button class="voltar" onclick="voltarParaFila()">🔙 Voltar ao fim da fila</button>
+      <button class="voltar" onclick="voltarParaFila()">🔙 Voltar ao fim da fila</button><br>
+      <button class="monitor" onclick="window.location.href='monitor.html'">🖥️ Ir para Monitor</button>
     </div>
   </div>
 
@@ -341,6 +346,7 @@
 </script>
 </body>
 </html>
+
 
 
 
