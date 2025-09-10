@@ -135,36 +135,39 @@
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWhjcnNvdWppcGdkdXV6bmJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczODY2MDAsImV4cCI6MjA3Mjk2MjYwMH0.SFZX58XrmHDTuJOlfA6JP_0sB5admEpcTAtnMKJPC2c';
 
     async function atualizarPainel() {
-      // AGORA CANTANDO
-      const resAgora = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`
-        }
-      });
-      const [agora] = await resAgora.json();
+    const headers = {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`
+    };
 
-      document.getElementById('agoraNome').textContent = agora ? `👤 ${agora.nome}` : 'Nenhuma música agora';
-      document.getElementById('agoraMusica').textContent = agora ? `🎵 ${agora.musica}` : '';
+    // 🎤 Agora Cantando
+    const resAgora = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&order=id.desc&limit=1`, {
+      headers
+    });
 
-      // PRÓXIMO DA FILA
-      const resProximo = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=neq.AGORA_CANTANDO&order=id.asc&limit=1`, {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`
-        }
-      });
-      const [proximo] = await resProximo.json();
+    const dataAgora = await resAgora.json();
+    const agora = dataAgora[0];
 
-      document.getElementById('proximoNome').textContent = proximo ? `👤 ${proximo.nome}` : 'Sem próximos na fila';
-      document.getElementById('proximoMusica').textContent = proximo ? `🎵 ${proximo.musica}` : '';
-    }
+    document.getElementById('agoraNome').textContent = agora ? `👤 ${agora.nome}` : 'Nenhuma música agora';
+    document.getElementById('agoraMusica').textContent = agora ? `🎵 ${agora.musica}` : '';
 
-    // Inicializa
-    atualizarPainel();
+    // ⏭ Próximo da Fila (considera status null ou "FILA")
+    const resProximo = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&or=(status.is.null,status.eq.FILA)&order=id.asc&limit=1`, {
+      headers
+    });
 
-    // Atualiza a cada 2 segundos
-    setInterval(atualizarPainel, 2000);
+    const dataProximo = await resProximo.json();
+    const proximo = dataProximo[0];
+
+    document.getElementById('proximoNome').textContent = proximo ? `👤 ${proximo.nome}` : 'Sem próximos na fila';
+    document.getElementById('proximoMusica').textContent = proximo ? `🎵 ${proximo.musica}` : '';
+  }
+
+  // Carregamento inicial
+  atualizarPainel();
+
+  // Atualização automática
+  setInterval(atualizarPainel, 2000);
   </script>
 </body>
 </html>
