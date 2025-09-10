@@ -154,10 +154,10 @@
 
         const li = document.createElement('li');
         li.innerHTML = `
-          <div class="nome">${posicao} – ${item.nome}</div>
-          <div>${item.musica}</div>
+          <div class="nome">👤 ${posicao} – ${item.nome}</div>
+          <div>🎵 ${item.musica}</div>
           <div>⏰ ${item.horario}</div>
-          ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+          ${item.youtube ? `<a class="link" href="${item.youtube}" target="_blank">🎥 Ver no YouTube</a>` : ""}
         `;
         listaFila.appendChild(li);
       });
@@ -198,6 +198,7 @@
   </script>
 </body>
 </html>
+
 
 
 
