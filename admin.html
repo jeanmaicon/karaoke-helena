@@ -163,51 +163,67 @@
   }
 
   async function cantarAgora(id) {
-    try {
-      const res = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`
-        }
-      });
-      const [item] = await res.json();
-      if (!item) return;
+  try {
+    // 1. Buscar música com status AGORA_CANTANDO
+    const resAtual = await fetch(`${supabaseUrl}/rest/v1/fila?select=*&status=eq.AGORA_CANTANDO&limit=1`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+    const [atual] = await resAtual.json();
 
-      await fetch(`${supabaseUrl}/rest/v1/fila?status=eq.AGORA_CANTANDO`, {
+    // 2. Se houver música tocando, deletar pelo ID
+    if (atual) {
+      await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${atual.id}`, {
         method: 'DELETE',
         headers: {
           apikey: supabaseKey,
           Authorization: `Bearer ${supabaseKey}`
         }
       });
-
-      await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${item.id}`, {
-        method: 'DELETE',
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`
-        }
-      });
-
-      const { id, ...novoItem } = item;
-      novoItem.status = 'AGORA_CANTANDO';
-
-      await fetch(`${supabaseUrl}/rest/v1/fila`, {
-        method: 'POST',
-        headers: {
-          apikey: supabaseKey,
-          Authorization: `Bearer ${supabaseKey}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(novoItem)
-      });
-
-      carregarFila();
-      carregarAgoraCantando();
-    } catch (err) {
-      console.error('Erro em cantarAgora:', err);
     }
+
+    // 3. Buscar a música clicada
+    const res = await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${id}`, {
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+    const [item] = await res.json();
+    if (!item) return;
+
+    // 4. Deletar do lugar original (fila)
+    await fetch(`${supabaseUrl}/rest/v1/fila?id=eq.${item.id}`, {
+      method: 'DELETE',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`
+      }
+    });
+
+    // 5. Recriar com status AGORA_CANTANDO
+    const { id: _, ...novoItem } = item;
+    novoItem.status = 'AGORA_CANTANDO';
+
+    await fetch(`${supabaseUrl}/rest/v1/fila`, {
+      method: 'POST',
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(novoItem)
+    });
+
+    carregarFila();
+    carregarAgoraCantando();
+  } catch (err) {
+    console.error('Erro em cantarAgora:', err);
   }
+}
+
 
   async function pularMusica() {
     try {
@@ -326,6 +342,7 @@
 </script>
 </body>
 </html>
+
 
 
 
