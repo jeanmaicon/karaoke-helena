@@ -178,10 +178,10 @@
         painelAgoraCantando.innerHTML = `<em>Nenhuma música em execução no momento.</em>`;
       } else {
         painelAgoraCantando.innerHTML = `
-          <strong>${agora.nome}</strong><br>
-          ${agora.musica}<br>
+          👤 <strong>${agora.nome}</strong><br>
+          🎵 ${agora.musica}<br>
           ⏰ ${agora.horario}<br>
-          ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">▶️ Ver no YouTube</a>` : ""}
+          ${agora.youtube ? `<a href="${agora.youtube}" target="_blank">🎥 Ver no YouTube</a>` : ""}
         `;
       }
     }
@@ -198,6 +198,7 @@
   </script>
 </body>
 </html>
+
 
 
 
